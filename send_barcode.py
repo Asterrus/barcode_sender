@@ -15,12 +15,23 @@ WINDOW_HEIGHT = 400
 gs_symbol_input = '<GS>'
 gs_symbol = chr(29)
 barcode_settings_sending = False
-
+def init_adb_settings():
+    print('1')
+    result = subprocess.run(['adb', 'kill-server'])
+    print('2')
+    result = subprocess.run(['adb', 'start-server'])
+    print('3')
+init_adb_settings()
 def get_devices_ip():
+    print('1')
     result = subprocess.run(['adb', 'shell', 'ip', 'addr', 'show', 'wlan0'],
                             stdout=subprocess.PIPE)
+    print('2')
+    print(result)
     output = result.stdout.decode('utf-8')
+    print(output)
     for ip in re.findall(r'inet (\d+\.\d+\.\d+\.\d+)', output):
+        print(ip)
         devices_ip.add(ip)
 
     return devices_ip
@@ -53,6 +64,7 @@ def refresh_devices():
         selector.set('')
         selected_device_name.config(text='')
     ips = list(get_devices_ip())
+    print("IP адреса:", ips)
     if ips:
         ip_selector.set(ips[0])
     else:
@@ -103,7 +115,9 @@ def send_barcode_settings():
         }
     }
     try:
-        result = requests.post(f'http://{device_ip}:8095', params=params, json=settings)
+        # result = requests.post(f'http://{device_ip}:8095', params=params, json=settings)
+        # result = requests.post(f'http://10.0.2.15:5554', params=params, json=settings)
+        result = requests.post(f'http://192.168.31.57:5554', params=params, json=settings)
         print(result.text)
     except Exception as e:
         print(e)
