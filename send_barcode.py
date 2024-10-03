@@ -70,8 +70,8 @@ def refresh_devices():
     else:
         ip_selector.set('')
 
-def send_barcode():
-    user_input = barc_label.get()
+def send_barcode(user_input):
+
     print("Штрихкод:", user_input)
     if not user_input:
         error_label.config(text="Вы не ввели штрихкод")
@@ -84,8 +84,21 @@ def send_barcode():
     if gs_symbol_input in user_input:
         user_input = user_input.replace(gs_symbol_input, gs_symbol)
     print("user_input:", user_input)
-    adb_command = f"adb -s {device_name} shell am broadcast -a {intent} --es {variable} {user_input}"
+    adb_command = f"adb -s {device_name} shell am broadcast -a {intent} --es {variable} '{user_input}'"
     subprocess.run(adb_command, shell=True)
+
+
+def send_barcode1():
+    send_barcode(barc_label1.get())
+
+
+def send_barcode2():
+    send_barcode(barc_label2.get())
+
+
+def send_barcode3():
+    send_barcode(barc_label3.get())
+
 
 def send_barcode_settings():
     global barcode_settings_sending
@@ -140,10 +153,20 @@ root.title("Barcode Sender")
 root.geometry(f'{WINDOW_WIDTH}x{WINDOW_HEIGHT}')
 
 
-barc_label = tk.Label(root, text="Введите штрихкод или маркировку \n (Разделитель - <GS>):")
-barc_label.pack()
-barc_label = tk.Entry(root)
-barc_label.pack()
+barc_label1 = tk.Label(root, text="Введите штрихкод или маркировку \n (Разделитель - <GS>):")
+barc_label1.pack()
+barc_label1 = tk.Entry(root)
+barc_label1.pack()
+submit_button1 = tk.Button(root, text="Отправить", command=send_barcode1)
+submit_button1.pack()
+barc_label2 = tk.Entry(root)
+barc_label2.pack()
+submit_button2 = tk.Button(root, text="Отправить", command=send_barcode2)
+submit_button2.pack()
+barc_label3 = tk.Entry(root)
+barc_label3.pack()
+submit_button3 = tk.Button(root, text="Отправить", command=send_barcode3)
+submit_button3.pack()
 
 intent_label = tk.Label(root, text="Введите intent:")
 intent_label.pack()
@@ -187,8 +210,6 @@ if devices_options:
     selected_device_name.config(text=devices_options[0])
 
 selector.pack()
-submit_button = tk.Button(root, text="Отправить", command=send_barcode)
-submit_button.pack()
 error_label = tk.Label(root, text="")
 error_label.pack()
 root.bind("<<SendBarcodeSettingsTaskFinished>>", send_barcode_settings_task_finished)
