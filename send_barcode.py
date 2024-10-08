@@ -16,17 +16,13 @@ gs_symbol_input = '<GS>'
 gs_symbol = chr(29)
 barcode_settings_sending = False
 def init_adb_settings():
-    print('1')
     result = subprocess.run(['adb', 'kill-server'])
-    print('2')
     result = subprocess.run(['adb', 'start-server'])
-    print('3')
+
 init_adb_settings()
 def get_devices_ip():
-    print('1')
     result = subprocess.run(['adb', 'shell', 'ip', 'addr', 'show', 'wlan0'],
                             stdout=subprocess.PIPE)
-    print('2')
     print(result)
     output = result.stdout.decode('utf-8')
     print(output)
